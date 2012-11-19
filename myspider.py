@@ -144,7 +144,7 @@ class DocFromWeb(EmMongoDict):
         'collection' : 'DocOnWeb',
     }
     indexes = {
-        'email' : {'unique':True},
+        'url' : {'unique':True},
     }
     
 DocFromWeb.init_collection()
