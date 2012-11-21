@@ -20,7 +20,7 @@ url_queue = Queue()
 def read_urls(filename):
     ff = open(filename, 'r')
     for each in ff:
-        url_queue.put(each)
+        url_queue.put(each.split('\n')[0])
     ff.close()
 
 
@@ -147,7 +147,6 @@ class DocFromWeb(EmMongoDict):
         'url' : {'unique':True},
     }
     
-DocFromWeb.init_collection()
 DocFromWeb.ensure_index()
 
 cnt = 0
@@ -156,14 +155,15 @@ def working():
         global cnt
         url = url_queue.get()
         tmp = DocFromWeb(spec={'url':url})
-        if not tmp.is_exist():
-            title, body = url_mapper(url)
-            if body is not None:
-                DocFromWeb(doc={'url':url, 'title':title, 'body':body})
-                cnt += 1
-                ttt = str(cnt)
-                ll = 8 - len(ttt)
-                print(ttt+' '*ll, '#',  url)
+        if tmp.is_exist():
+            continue
+        title, body = url_mapper(url)
+        if body is not None:
+            nnn = DocFromWeb.new_doc({'url':url, 'title':title, 'body':body})
+            cnt += 1
+            ttt = str(cnt)
+            ll = 8 - len(ttt)
+            print(ttt+' '*ll, '#',  url)
         if cnt > 20000:
             return
         #sleep(30)
@@ -172,7 +172,7 @@ def working():
 if __name__ == '__main__':
     read_urls('initurls.conf')
     
-    NUM = 30
+    NUM = 1
     for i in range(NUM):
         t = Thread(target=working)
         t.setDaemon(True)

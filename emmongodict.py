@@ -29,11 +29,14 @@ class EmMongoDict(object):
         self.spec = spec
         self.path = path
         self.coll = None
+        print(1)
         if not self.spec:
             if doc is None:
                 doc = dict()
+            print(2)
             self.spec = {'_id':self.new_doc(doc=doc)}
         elif doc:
+            print(3)
             self.update(doc)
 
     @myclassmethod
@@ -48,7 +51,9 @@ class EmMongoDict(object):
     def is_exist(self):
         '''test whether spec is in db'''
         ret = self.coll.find_one(spec_or_id=self.spec, fields={'_id':1})
-        return ret is not None
+        if not ret:
+            return False
+        return True
 
     @auto_coll_do
     def ensure_exist(self):
