@@ -32,12 +32,15 @@ def un_deflate(data):   # zlib only provides the zlib compress format, not the d
         return zlib.decompress(data, -zlib.MAX_WBITS)
     except zlib.error:
         return zlib.decompress(data)
+    except Exception as e:
+        print('deflate error:', e)
+        return None
 
 def un_gzip(data):
     return GzipFile(fileobj=BytesIO(data), mode='r').read()
 
 headers = {
-    'Accept-Encoding' : 'gzip',
+    'Accept-Encoding' : 'gzip, deflate',
     'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
 }
 
@@ -50,8 +53,10 @@ def get_html(req):
     html = response.read()
     if response.headers.get('content-encoding') == 'gzip':
         html = un_gzip(html)
-    #elif response.headers.get('content-encoding') == 'deflate':
-    #    html = un_deflate(html)
+    elif response.headers.get('content-encoding') == 'deflate':
+        html = un_deflate(html)
+    if html is None:
+        return None, ''
     encoding = chardet.detect(html)['encoding']
     tmp = re.search(r'^http://([^/]+)', response.geturl())
     reqhost = tmp.group(1) if tmp else None
@@ -88,7 +93,8 @@ def url_gen():
         mobjs = pattern.finditer(text)
         for mobj in mobjs:
             tmp = mobj.group(1)
-            if tmp[0] == '#':
+            tmp = tmp.split('#')[0]
+            if not tmp:
                 continue
             if tmp[0] == '/':
                 tmp = 'http://' + reqhost + tmp
@@ -173,7 +179,7 @@ def working():
 if __name__ == '__main__':
     read_urls('initurls.conf')
     
-    NUM = 70
+    NUM = 40
     for i in range(NUM):
         t = Thread(target=working)
         t.setDaemon(True)
