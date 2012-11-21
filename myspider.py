@@ -174,7 +174,7 @@ class DocFromWeb(EmMongoDict):
         'url' : {'unique':True},
     }
     
-#DocFromWeb.init_collection()
+DocFromWeb.init_collection()
 DocFromWeb.ensure_index()
 
 cnt = 0
@@ -200,11 +200,12 @@ def working():
 if __name__ == '__main__':
     read_urls('initurls.conf')
     
-    NUM = 40
+    NUM = 50
     for i in range(NUM):
         t = Thread(target=working)
         t.setDaemon(True)
         t.start()
-        #sleep(0.01)
+        print('start new:', i)
+        sleep(0.2)
     while True:
         sleep(30)
