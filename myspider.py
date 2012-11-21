@@ -98,6 +98,8 @@ def url_gen():
                 continue
             if tmp[0] == '/':
                 tmp = 'http://' + reqhost + tmp
+            if tmp[0] != 'h':
+                continue
             url_queue.put(tmp)
     return get_url
 
