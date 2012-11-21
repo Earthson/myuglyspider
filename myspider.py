@@ -17,6 +17,17 @@ request.install_opener(opener)
 
 url_queue = Queue()
 
+tmp_file = open('blacklist.conf', 'r')
+black_list = [each[:-1] for each in tmp_file]
+tmp_file.close()
+
+import re
+
+black_pat = re.compile('|'.join(r'.*' + each + r'.*' for each in black_list))
+
+def in_blacklist(url):
+    return black_pat.match(url)
+
 def read_urls(filename):
     ff = open(filename, 'r')
     for each in ff:
@@ -104,6 +115,9 @@ def url_gen():
                     continue
             if tmp[0] != 'h':
                 continue
+            if in_blacklist(tmp):
+                #print('In Black List:', tmp)
+                continue
             url_queue.put(tmp)
     return get_url
 
@@ -159,7 +173,7 @@ class DocFromWeb(EmMongoDict):
         'url' : {'unique':True},
     }
     
-#DocFromWeb.init_collection()
+DocFromWeb.init_collection()
 DocFromWeb.ensure_index()
 
 cnt = 0
