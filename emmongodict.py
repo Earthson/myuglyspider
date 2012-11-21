@@ -29,14 +29,11 @@ class EmMongoDict(object):
         self.spec = spec
         self.path = path
         self.coll = None
-        print(1)
         if not self.spec:
             if doc is None:
                 doc = dict()
-            print(2)
             self.spec = {'_id':self.new_doc(doc=doc)}
         elif doc:
-            print(3)
             self.update(doc)
 
     @myclassmethod

@@ -11,7 +11,7 @@ from threading import Thread
 from queue import Queue
 from time import sleep
 
-proxy_support = request.ProxyHandler({'http':'http://localhost:9999'})
+proxy_support = request.ProxyHandler({'http':'http://localhost:5000'})
 opener = request.build_opener(proxy_support, request.HTTPHandler)
 request.install_opener(opener)
 
@@ -147,6 +147,7 @@ class DocFromWeb(EmMongoDict):
         'url' : {'unique':True},
     }
     
+#DocFromWeb.init_collection()
 DocFromWeb.ensure_index()
 
 cnt = 0
@@ -164,7 +165,7 @@ def working():
             ttt = str(cnt)
             ll = 8 - len(ttt)
             print(ttt+' '*ll, '#',  url)
-        if cnt > 20000:
+        if cnt > 50000:
             return
         #sleep(30)
 
@@ -172,7 +173,7 @@ def working():
 if __name__ == '__main__':
     read_urls('initurls.conf')
     
-    NUM = 1
+    NUM = 70
     for i in range(NUM):
         t = Thread(target=working)
         t.setDaemon(True)
