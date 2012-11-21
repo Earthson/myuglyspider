@@ -97,7 +97,11 @@ def url_gen():
             if not tmp:
                 continue
             if tmp[0] == '/':
-                tmp = 'http://' + reqhost + tmp
+                try:
+                    tmp = 'http://' + reqhost + tmp
+                except:
+                    print(reqhost, tmp)
+                    continue
             if tmp[0] != 'h':
                 continue
             url_queue.put(tmp)
