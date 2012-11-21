@@ -11,7 +11,8 @@ from threading import Thread
 from queue import Queue
 from time import sleep
 
-proxy_support = request.ProxyHandler({'http':'http://localhost:5000'})
+#proxy_support = request.ProxyHandler({'http':'http://localhost:5000'})
+proxy_support = request.ProxyHandler({'http':'http://localhost:9999'})
 opener = request.build_opener(proxy_support, request.HTTPHandler)
 request.install_opener(opener)
 
@@ -173,7 +174,7 @@ class DocFromWeb(EmMongoDict):
         'url' : {'unique':True},
     }
     
-DocFromWeb.init_collection()
+#DocFromWeb.init_collection()
 DocFromWeb.ensure_index()
 
 cnt = 0
